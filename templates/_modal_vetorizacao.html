@@ -1,0 +1,78 @@
+<!-- Modal para envio de arquivos -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">Enviar Arquivo para Embedding</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="upload-form">
+                    <div class="mb-3">
+                        <label for="files" class="form-label">Escolha o arquivo PDF</label>
+                        <input type="file" class="form-control" id="files" accept=".pdf" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="document_type" class="form-label">Tipo de Documento</label>
+                        <input type="text" class="form-control" id="document_type" name="document_type" required placeholder="Ex: Lei, Decreto, Portaria">
+                    </div>
+                    <div class="mb-3">
+                        <label for="document_number" class="form-label">Número do Documento</label>
+                        <input type="text" class="form-control" id="document_number" name="document_number" required placeholder="Ex: 1234/2021">
+                    </div>
+                    <div class="mb-3">
+                        <label for="subject" class="form-label">Assunto</label>
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Ex: Dispõe sobre...">
+                    </div>
+                    <div class="mb-3">
+                        <label for="publication_date" class="form-label">Data de Publicação</label>
+                        <input type="date" class="form-control" id="publication_date" name="publication_date" placeholder="Ex: 2021-12-31">
+                    </div>
+                    <div class="mb-3">
+                        <label for="keywords" class="form-label">Palavras-chave</label>
+                        <input type="text" class="form-control" id="keywords" name="keywords" placeholder="Ex: palavra1, palavra2, palavra3">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" id="submit-upload" class="btn btn-primary">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Ao clicar no botão de enviar no modal
+        $('#submit-upload').on('click', function () {
+            const fileInput = $('#files')[0]; // Captura o input de arquivo
+
+            // Verifica se um arquivo foi selecionado
+            if (fileInput.files.length === 0) {
+                alert('Por favor, selecione um arquivo.');
+                return;
+            }
+
+            const formData = new FormData($('#upload-form')[0]); // Captura todos os dados do formulário
+
+            // Envio da requisição AJAX
+            $.ajax({
+                url: '/send_file_to_rag', // URL do endpoint
+                method: 'POST',
+                data: formData,
+                processData: false, // Impede que o jQuery converta o FormData em string
+                contentType: false,
+                success: function (response) {
+                    alert(response.message);
+                    $('#uploadModal').modal('hide');
+                    loadFileList();
+                },
+                error: function (jqXHR) {
+                    const errorMessage = jqXHR.responseJSON?.error || 'Erro ao enviar arquivo. Tente novamente.'; 
+                    alert(errorMessage); // Exibe a mensagem de erro
+                }
+            });
+        });
+    });
+</script>

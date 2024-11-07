@@ -1,0 +1,35 @@
+<!-- HTML Mostrando os arquivos quer foram embeddados -->
+<div class="container mt-5">
+    <div class="row">
+        {% for arquivo in arquivos %}
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="icon me-3">
+                                {% if arquivo.document_type == 'pdf' %}
+                                    <i class="fas fa-file-pdf fa-2x text-danger"></i>
+                                {% elif arquivo.document_type == 'docx' %}
+                                    <i class="fas fa-file-word fa-2x text-primary"></i>
+                                {% elif arquivo.document_type == 'csv' %}
+                                    <i class="fas fa-file-csv fa-2x text-success"></i>
+                                {% else %}
+                                    <i class="fas fa-file fa-2x text-secondary"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h5 class="card-title">{{ arquivo.document_type }}</h5>
+                                <p class="card-text">{{ arquivo.document_number }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <a href="{{ url_for('download', filename=arquivo.filename) }}" class="btn btn-primary btn-sm">Baixar</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>    
+</div>
+
+
